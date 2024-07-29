@@ -45,11 +45,78 @@ export class HomePage implements OnInit {
   
 
   // -- Agregar Publicación --
-  addUpdateProduct() {
+  addUpdateProduct(publicacion?: Publicacion) {
     this.utilsSvc.presentModal({
       component: AddUpdatePublicacionComponent,
-      cssClass: 'add-update-modal'
+      cssClass: 'add-update-modal',
+      componentProps: {publicacion}
     })
   }
+
+  // Alerta para eliminar
+  async confirmDeletePublicacion(publicacion: Publicacion) {
+    this.utilsSvc.presentAlert({
+      header: 'Eliminar publicación',
+      message: '¿Quieres elimnar esta publicación?',
+      mode: 'ios',
+      buttons: [
+        {
+          text: 'Cancelar',
+        }, {
+          text: 'Sí. eliminar',
+          handler: () => {
+            this.deletePublicacion(publicacion);
+          }
+        }
+      ]
+    });
+  }
+
+
+  // -- Eliminar publicación --
+
+  async deletePublicacion(publicacion: Publicacion){
+    
+
+    let path = `users/${this.user().uid}/publicaciones/${publicacion.id}`
+
+    const loading = await this.utilsSvc.loading();
+    await loading.present();
+
+    let imagePath = await this.firebaseSvc.getFilePath(publicacion.image);
+    await this.firebaseSvc.deleteFile(imagePath);
+
+    
+
+    this.firebaseSvc.deleteDocument(path).then(async res => {
+
+      this.publicaciones = this.publicaciones.filter(p => p.id !== publicacion.id);
+
+
+      this.utilsSvc.presentToast({
+        message: 'Publicación borrada con éxito',
+        duration: 1500,
+        color: 'success',
+        position: 'middle',
+        icon: 'checkmark-circle-outline'
+      })
+
+
+    }).catch(error => {
+      console.log(error);
+
+      this.utilsSvc.presentToast({
+        message: error.message,
+        duration: 2500,
+        color: 'primary',
+        position: 'middle',
+        icon: 'alert-circle-outline'
+      })
+      
+    }).finally(() => {
+      loading.dismiss();
+    })
+  
+}
 
 }

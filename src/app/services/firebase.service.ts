@@ -3,10 +3,10 @@ import {AngularFireAuth} from '@angular/fire/compat/auth';
 import {getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail} from 'firebase/auth'
 import { User } from '../models/user.model';
 import {AngularFirestore} from '@angular/fire/compat/firestore';
-import {getFirestore, setDoc, doc, getDoc, addDoc, collection, collectionData, query} from '@angular/fire/firestore'
+import {getFirestore, setDoc, doc, getDoc, addDoc, collection, collectionData, query, updateDoc, deleteDoc} from '@angular/fire/firestore'
 import { UtilsService } from './utils.service';
 import {AngularFireStorage} from '@angular/fire/compat/storage';
-import {getStorage, uploadString, ref, getDownloadURL} from 'firebase/storage';
+import {getStorage, uploadString, ref, getDownloadURL, deleteObject} from 'firebase/storage';
 
 
 
@@ -69,6 +69,16 @@ getCollectionData(path: string, collectionQuery?: any){
     return setDoc(doc(getFirestore(), path), data);
   }
 
+  // ------ actualizar un documento ----
+  updateDocument(path: string, data: any){
+    return updateDoc(doc(getFirestore(), path), data);
+  }
+
+  // ------ elimiar un documento ----
+  deleteDocument(path: string){
+    return deleteDoc(doc(getFirestore(), path));
+  }
+
   // ------ Obtener un documento ----
   async getDocument(path: string){
     return (await getDoc(doc(getFirestore(), path))).data();
@@ -86,6 +96,15 @@ async uploadImage(path: string, data_url: string){
     return getDownloadURL(ref(getStorage(), path))
 
   })
+}
+
+async getFilePath(url: string){
+  return ref(getStorage(), url).fullPath
+}
+
+//Eliminar archivo
+deleteFile(path: string){
+  return deleteObject(ref(getStorage(), path));
 }
 
 }
