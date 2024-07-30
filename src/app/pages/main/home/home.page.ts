@@ -16,6 +16,7 @@ export class HomePage implements OnInit {
   utilsSvc = inject(UtilsService);
 
   publicaciones: Publicacion[] = [];
+  loading: boolean = false;
 
   ngOnInit() {
   }
@@ -28,14 +29,25 @@ export class HomePage implements OnInit {
     this.getProducts();
   }
 
+  doRefresh(event) {
+    setTimeout(() => {
+      this.getProducts();
+      event.target.complete();
+    }, 1000);
+  }
+
   // -- Obtener productos --
   getProducts(){
     let path = `users/${this.user().uid}/publicaciones`;
+
+    this.loading = true;
+
 
     let sub = this.firebaseSvc.getCollectionData(path).subscribe({
       next: (res: any) => {
         console.log(res);
         this.publicaciones = res;
+        this.loading = false;
         sub.unsubscribe;
         
       }
