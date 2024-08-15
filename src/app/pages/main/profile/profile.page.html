@@ -12,16 +12,12 @@
   </ion-button>
 
   <h2>{{user()?.name}}</h2>
-  <div>Usuario</div>
+  <div>{{user()?.email}}</div>
 
-  <ion-item button detail>
-    <ion-icon color="primary" slot="start" name="person-outline"></ion-icon>
-    <ion-label>Editar perfil</ion-label>
+  <ion-item button detail (click)="confirmDeleteUser()">
+    <ion-icon color="danger" slot="start" name="trash-outline"></ion-icon>
+    <ion-label color="danger">Eliminar cuenta</ion-label>
   </ion-item>
-
-  <ion-item button detail>
-    <ion-icon color="primary" slot="start" name="document-outline"></ion-icon>
-    <ion-label>Terminos & Condiciones</ion-label>
-  </ion-item>
+  
 
 </ion-content>

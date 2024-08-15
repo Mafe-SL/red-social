@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import {AngularFireAuth} from '@angular/fire/compat/auth';
-import {getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail} from 'firebase/auth'
+import {getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail, deleteUser} from 'firebase/auth'
 import { User } from '../models/user.model';
 import {AngularFirestore} from '@angular/fire/compat/firestore';
 import {getFirestore, setDoc, doc, getDoc, addDoc, collection, collectionData, query, updateDoc, deleteDoc} from '@angular/fire/firestore'
@@ -34,6 +34,22 @@ export class FirebaseService {
   // -- Crear Usuario --
   signUp(user: User) {
     return createUserWithEmailAndPassword(getAuth(), user.email, user.password)
+  }
+
+  // -- Eliminar Usuario --
+  deleteUser(user: User) {
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+  
+    if (currentUser) {
+      return deleteUser(currentUser).then(() => {
+        console.log('Usuario eliminado exitosamente');
+      }).catch((error) => {
+        console.error('Error eliminando el usuario:', error);
+      });
+    } else {
+      return Promise.reject('No hay un usuario autenticado');
+    }
   }
 
   // -- Actualizar Usuario --
